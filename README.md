@@ -92,4 +92,16 @@ Suhani Kaldate
 
 Vaishnavi Kade
 
-Vaishnavi Bagale
+Vaishnavi Bagale 
+
+
+## Screenshots
+
+### Employee Management UI
+![Employee UI](screenshot/home-page.png)
+
+### API Testing using Postman
+![Postman API](screenshot/postman-get.png)
+
+### Employee Management UI add section
+![Employee UI](screenshot/add-section.png)
