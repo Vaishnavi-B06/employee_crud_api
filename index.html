@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Employee Management System</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Splash Screen -->
+    <div id="splash-screen" class="splash-screen">
+        <div class="logo-container">
+            <div class="logo">EMS</div>
+            <p class="company-name">Employee Management System</p>
+        </div>
+    </div>
+
+    <!-- Main Dashboard -->
+    <div id="main-dashboard" class="main-dashboard hidden">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <h1 class="header-title">Employee Management System</h1>
+                <button class="btn btn-primary" id="add-employee-btn">
+                    <span class="btn-icon">+</span> Add Employee
+                </button>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="content-wrapper">
+                <!-- Stats Cards -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon">👥</div>
+                        <div class="stat-info">
+                            <h3 class="stat-value" id="total-employees">0</h3>
+                            <p class="stat-label">Total Employees</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">🏢</div>
+                        <div class="stat-info">
+                            <h3 class="stat-value" id="total-departments">0</h3>
+                            <p class="stat-label">Departments</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Employee Table -->
+                <div class="table-container">
+                    <div class="table-header">
+                        <h2 class="table-title">Employee Directory</h2>
+                        <input type="text" id="search-input" class="search-input" placeholder="Search employees...">
+                    </div>
+                    <div class="table-wrapper">
+                        <table class="employee-table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Name</th>
+                                    <th>Email</th>
+                                    <th>Department</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="employee-table-body">
+                                <!-- Employee rows will be inserted here -->
+                            </tbody>
+                        </table>
+                        <div id="loading-state" class="loading-state hidden">
+                            <div class="spinner"></div>
+                            <p>Loading employees...</p>
+                        </div>
+                        <div id="empty-state" class="empty-state hidden">
+                            <div class="empty-icon">📋</div>
+                            <h3>No Employees Found</h3>
+                            <p>Start by adding your first employee</p>
+                        </div>
+                        <div id="error-state" class="error-state hidden">
+                            <div class="error-icon">⚠️</div>
+                            <h3>Unable to Load Employees</h3>
+                            <p id="error-message">Please check your connection and try again</p>
+                            <button class="btn btn-secondary" onclick="loadEmployees()">Retry</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Add Employee Modal -->
+    <div id="add-employee-modal" class="modal hidden">
+        <div class="modal-overlay"></div>
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Add New Employee</h2>
+                <button class="modal-close" onclick="closeAddModal()">&times;</button>
+            </div>
+            <form id="add-employee-form" class="modal-form">
+                <div class="form-group">
+                    <label for="add-name">Full Name</label>
+                    <input type="text" id="add-name" required placeholder="John Doe">
+                </div>
+                <div class="form-group">
+                    <label for="add-email">Email</label>
+                    <input type="email" id="add-email" required placeholder="john.doe@company.com">
+                </div>
+                <div class="form-group">
+                    <label for="add-department">Department</label>
+                    <input type="text" id="add-department" required placeholder="Engineering">
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-secondary" onclick="closeAddModal()">Cancel</button>
+                    <button type="submit" class="btn btn-primary">
+                        <span class="btn-loading hidden">
+                            <span class="btn-spinner"></span>
+                        </span>
+                        <span class="btn-text">Add Employee</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Edit Employee Modal -->
+    <div id="edit-employee-modal" class="modal hidden">
+        <div class="modal-overlay"></div>
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Edit Employee</h2>
+                <button class="modal-close" onclick="closeEditModal()">&times;</button>
+            </div>
+            <form id="edit-employee-form" class="modal-form">
+                <input type="hidden" id="edit-id">
+                <div class="form-group">
+                    <label for="edit-name">Full Name</label>
+                    <input type="text" id="edit-name" required>
+                </div>
+                <div class="form-group">
+                    <label for="edit-email">Email</label>
+                    <input type="email" id="edit-email" required>
+                </div>
+                <div class="form-group">
+                    <label for="edit-department">Department</label>
+                    <input type="text" id="edit-department" required>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-secondary" onclick="closeEditModal()">Cancel</button>
+                    <button type="submit" class="btn btn-primary">
+                        <span class="btn-loading hidden">
+                            <span class="btn-spinner"></span>
+                        </span>
+                        <span class="btn-text">Update Employee</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div id="delete-modal" class="modal hidden">
+        <div class="modal-overlay"></div>
+        <div class="modal-content modal-small">
+            <div class="modal-header">
+                <h2>Confirm Delete</h2>
+                <button class="modal-close" onclick="closeDeleteModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to delete <strong id="delete-employee-name"></strong>?</p>
+                <p class="text-muted">This action cannot be undone.</p>
+            </div>
+            <div class="modal-actions">
+                <button type="button" class="btn btn-secondary" onclick="closeDeleteModal()">Cancel</button>
+                <button type="button" class="btn btn-danger" onclick="confirmDelete()">
+                    <span class="btn-loading hidden">
+                        <span class="btn-spinner"></span>
+                    </span>
+                    <span class="btn-text">Delete</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
